@@ -14,7 +14,7 @@ services:
       MYSQL_USER: ${MATOMO_DB_USER}
       MYSQL_PASSWORD: ${MATOMO_DB_PASSWORD}
 
-  app:
+  matomo:
     image: matomo:3.13.5-fpm-alpine
     container_name: matomo
     restart: always
