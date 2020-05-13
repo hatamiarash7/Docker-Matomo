@@ -40,9 +40,9 @@ services:
       - "traefik.http.routers.matomo.tls.certresolver=letsencrypt"
       - "traefik.http.routers.matomo.entrypoints=websecure"
       # HTTPS Redirect
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.routers.matomo-http.rule=Host(`${TRAEFIK_DOMAIN}`)"
+      - "traefik.http.routers.matomo-http.entrypoints=web"
+      - "traefik.http.routers.matomo-http.middlewares=redirect-to-https@docker"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     networks:
       - traefik
