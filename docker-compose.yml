@@ -42,8 +42,8 @@ services:
       # HTTPS Redirect
       - "traefik.http.routers.matomo-http.rule=Host(`${TRAEFIK_DOMAIN}`)"
       - "traefik.http.routers.matomo-http.entrypoints=web"
-      - "traefik.http.routers.matomo-http.middlewares=redirect-to-https@docker"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.matomo-http.middlewares=matomo-https@docker"
+      - "traefik.http.middlewares.matomo-https.redirectscheme.scheme=https"
     networks:
       - traefik
 
