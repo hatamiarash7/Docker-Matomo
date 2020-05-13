@@ -25,6 +25,8 @@ services:
       - ./logs:/var/www/html/logs
       - ./php.ini:/usr/local/etc/php/php.ini
       - matomo:/var/www/html
+    ports:
+      - 9000:9000
     environment:
       - MATOMO_DATABASE_HOST=db
       - MATOMO_DATABASE_ADAPTER=mysql
