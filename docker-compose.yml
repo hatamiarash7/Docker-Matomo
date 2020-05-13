@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  db:
+  mariadb:
     image: mariadb:10.5.2
     container_name: mariadb
     command: --max-allowed-packet=64MB
@@ -13,20 +13,22 @@ services:
       MYSQL_DATABASE: ${MATOMO_DB_NAME}
       MYSQL_USER: ${MATOMO_DB_USER}
       MYSQL_PASSWORD: ${MATOMO_DB_PASSWORD}
+    networks:
+      - internal
 
   matomo:
     image: matomo:3.13.5-apache
     container_name: matomo
     restart: always
     links:
-      - db
+      - mariadb
     volumes:
       - ./config:/var/www/html/config:rw
       - ./logs:/var/www/html/logs
       - ./php.ini:/usr/local/etc/php/php.ini
       - matomo:/var/www/html
     environment:
-      - MATOMO_DATABASE_HOST=db
+      - MATOMO_DATABASE_HOST=mariadb
       - MATOMO_DATABASE_ADAPTER=mysql
       - MATOMO_DATABASE_TABLES_PREFIX=matomo_
       - MATOMO_DATABASE_USERNAME=${MATOMO_DB_USER}
@@ -47,6 +49,7 @@ services:
       - "traefik.http.routers.matomo-http.middlewares=matomo-https@docker"
       - "traefik.http.middlewares.matomo-https.redirectscheme.scheme=https"
     networks:
+      - internal
       - traefik
 
 volumes:
@@ -54,5 +57,8 @@ volumes:
   matomo:
 
 networks:
+  internal:
+    external: false
+    driver: bridge
   traefik:
     external: true
