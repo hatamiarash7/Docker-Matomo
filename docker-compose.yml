@@ -40,7 +40,7 @@ services:
       - "traefik.http.routers.matomo.tls.certresolver=letsencrypt"
       - "traefik.http.routers.matomo.entrypoints=websecure"
       - "traefik.http.routers.matomo.service=matomo"
-      - "traefik.http.services.matomo.loadbalancer.server.port=80"
+      - "traefik.http.services.matomo.loadbalancer.server.port=9000"
       # HTTPS Redirect
       - "traefik.http.routers.matomo-http.rule=Host(`${TRAEFIK_DOMAIN}`)"
       - "traefik.http.routers.matomo-http.entrypoints=web"
