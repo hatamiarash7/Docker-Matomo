@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  db:
+    image: mariadb:10.5.2
+    container_name: mariadb
+    command: --max-allowed-packet=64MB
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MATOMO_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MATOMO_DB_NAME}
+      MYSQL_USER: ${MATOMO_DB_USER}
+      MYSQL_PASSWORD: ${MATOMO_DB_PASSWORD}
+
+  app:
+    image: matomo:3.13.5-fpm-alpine
+    container_name: matomo
+    restart: always
+    links:
+      - db
+    volumes:
+      - ./config:/var/www/html/config:rw
+      - ./logs:/var/www/html/logs
+      - ./php.ini:/usr/local/etc/php/php.ini
+      - matomo:/var/www/html
+    environment:
+      - MATOMO_DATABASE_HOST=db
+      - MATOMO_DATABASE_ADAPTER=mysql
+      - MATOMO_DATABASE_TABLES_PREFIX=matomo_
+      - MATOMO_DATABASE_USERNAME=${MATOMO_DB_USER}
+      - MATOMO_DATABASE_PASSWORD=${MATOMO_DB_PASSWORD}
+      - MATOMO_DATABASE_DBNAME=${MATOMO_DB_NAME}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      # Dashboard
+      - "traefik.http.routers.matomo.rule=Host(`${TRAEFIK_DOMAIN}`)"
+      - "traefik.http.routers.matomo.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.matomo.entrypoints=websecure"
+      # HTTPS Redirect
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    networks:
+      - traefik
+
+volumes:
+  db:
+  matomo:
+
+networks:
+  traefik:
+    external: true
