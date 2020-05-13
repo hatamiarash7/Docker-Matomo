@@ -15,7 +15,7 @@ services:
       MYSQL_PASSWORD: ${MATOMO_DB_PASSWORD}
 
   matomo:
-    image: matomo:3.13.5-fpm-alpine
+    image: matomo:3.13.5-apache
     container_name: matomo
     restart: always
     links:
@@ -25,8 +25,6 @@ services:
       - ./logs:/var/www/html/logs
       - ./php.ini:/usr/local/etc/php/php.ini
       - matomo:/var/www/html
-    ports:
-      - 9000:9000
     environment:
       - MATOMO_DATABASE_HOST=db
       - MATOMO_DATABASE_ADAPTER=mysql
@@ -42,7 +40,7 @@ services:
       - "traefik.http.routers.matomo.tls.certresolver=letsencrypt"
       - "traefik.http.routers.matomo.entrypoints=websecure"
       - "traefik.http.routers.matomo.service=matomo"
-      - "traefik.http.services.matomo.loadbalancer.server.port=9000"
+      - "traefik.http.services.matomo.loadbalancer.server.port=80"
       # HTTPS Redirect
       - "traefik.http.routers.matomo-http.rule=Host(`${TRAEFIK_DOMAIN}`)"
       - "traefik.http.routers.matomo-http.entrypoints=web"
