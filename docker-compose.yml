@@ -17,7 +17,7 @@ services:
       - internal
 
   matomo:
-    image: matomo:3.13.5-apache
+    image: matomo:4.4.1-apache
     container_name: matomo
     restart: always
     links:
