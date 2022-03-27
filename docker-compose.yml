@@ -16,7 +16,7 @@ services:
     networks:
       - internal
     healthcheck:
-      test: mysql --user=$$MATOMO_DB_USER --password=$$MATOMO_DB_PASSWORD -e 'SHOW DATABASES;'
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       interval: 10s
       timeout: 5s
       retries: 5
